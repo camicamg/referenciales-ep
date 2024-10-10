@@ -8,7 +8,7 @@ class Conexion:
         # https://www.psycopg.org/docs/extensions.html#psycopg2.extensions.parse_dsn
         dbname = "mi Bd"
         user = "postgres"
-        password = "Amane.1"
+        password = "Amanece.1"
         host = "localhost"
         port = 5432
         #self.con = psycopg2.connect("dbname=veterinaria-db user=juandba host=localhost password=admin")

@@ -2,65 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class SucursalDao:
+class DepartamentoDao:
 
-    def get_sucursales(self):
+    def getDepartamentos(self):
 
-        sucursalSQL = """
+        departamentoSQL = """
         SELECT id, descripcion
-        FROM sucursales
+        FROM departamentos
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(sucursalSQL)
-            sucursales = cur.fetchall() # trae datos de la bd
+            cur.execute(departamentoSQL)
+            departamentos = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': sucursal[0], 'descripcion': sucursal[1]} for sucursal in sucursales]
+            return [{'id': departamento[0], 'descripcion': departamento[1]} for departamento in departamentos]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todas las sucursales: {str(e)}")
+            app.logger.error(f"Error al obtener todas las departamentos: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getSucursalById(self, id):
+    def getDepartamentoById(self, id):
 
-        sucursalSQL = """
+        departamentoSQL = """
         SELECT id, descripcion
-        FROM sucursales WHERE id=%s
+        FROM departamentos WHERE id=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(sucursalSQL, (id,))
-            sucursalEncontrada = cur.fetchone() # Obtener una sola fila
-            if sucursalEncontrada:
+            cur.execute(departamentoSQL, (id,))
+            departamentoEncontrada = cur.fetchone() # Obtener una sola fila
+            if departamentoEncontrada:
                 return {
-                        "id": sucursalEncontrada[0],
-                        "descripcion": sucursalEncontrada[1]
-                    }  # Retornar los datos de la sucursal
+                        "id": departamentoEncontrada[0],
+                        "descripcion": departamentoEncontrada[1]
+                    }  # Retornar los datos del departamento
             else:
-                return None # Retornar None si no se encuentra la sucursal
+                return None # Retornar None si no se encuentra el departamento
         except Exception as e:
-            app.logger.error(f"Error al obtener sucursal: {str(e)}")
+            app.logger.error(f"Error al obtener departamento: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarSucursal(self, descripcion):
+    def guardarDepartamento(self, descripcion):
 
-        insertSucursalSQL = """
-        INSERT INTO sucursales(descripcion) VALUES(%s) RETURNING id
+        insertDepartamentoSQL = """
+        INSERT INTO departamentos(descripcion) VALUES(%s) RETURNING id
         """
 
         conexion = Conexion()
@@ -69,14 +69,14 @@ class SucursalDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertSucursalSQL, (descripcion,))
-            sucursal_id = cur.fetchone()[0]
+            cur.execute(insertDepartamentoSQL, (descripcion,))
+            departamento_id = cur.fetchone()[0]
             con.commit() # se confirma la insercion
-            return sucursal_id
+            return departamento_id
 
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar sucursal: {str(e)}")
+            app.logger.error(f"Error al insertar departamento: {str(e)}")
             con.rollback() # retroceder si hubo error
             return False
 
@@ -85,10 +85,10 @@ class SucursalDao:
             cur.close()
             con.close()
 
-    def updateSucursal(self, id, descripcion):
+    def updateDepartamento(self, id, descripcion):
 
-        updateSucursalSQL = """
-        UPDATE sucursales
+        updateDepartamentoSQL = """
+        UPDATE departamentos
         SET descripcion=%s
         WHERE id=%s
         """
@@ -98,14 +98,14 @@ class SucursalDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateSucursalSQL, (descripcion, id,))
+            cur.execute(updateDepartamentoSQL, (descripcion, id,))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas
             con.commit()
 
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar sucursal: {str(e)}")
+            app.logger.error(f"Error al actualizar departamento: {str(e)}")
             con.rollback()
             return False
 
@@ -113,10 +113,10 @@ class SucursalDao:
             cur.close()
             con.close()
 
-    def deleteSucursal(self, id):
+    def deleteDepartamento(self, id):
 
-        updateSucursalSQL = """
-        DELETE FROM sucursales
+        updateDepartamentoSQL = """
+        DELETE FROM departamentos
         WHERE id=%s
         """
 
@@ -125,14 +125,14 @@ class SucursalDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateSucursalSQL, (id,))
+            cur.execute(updateDepartamentoSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al eliminar sucursal: {str(e)}")
+            app.logger.error(f"Error al eliminar departamento: {str(e)}")
             con.rollback()
             return False
 

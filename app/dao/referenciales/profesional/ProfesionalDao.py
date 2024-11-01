@@ -2,65 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class SucursalDao:
+class ProfesionalDao:
 
-    def get_sucursales(self):
+    def getProfesionales(self):
 
-        sucursalSQL = """
+        profesionalSQL = """
         SELECT id, descripcion
-        FROM sucursales
+        FROM profesionales
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(sucursalSQL)
-            sucursales = cur.fetchall() # trae datos de la bd
+            cur.execute(profesionalSQL)
+            profesionales = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': sucursal[0], 'descripcion': sucursal[1]} for sucursal in sucursales]
+            return [{'id': profesional[0], 'descripcion': profesional[1]} for profesional in profesionales]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todas las sucursales: {str(e)}")
+            app.logger.error(f"Error al obtener todos los profesionales: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getSucursalById(self, id):
+    def getProfesionalById(self, id):
 
-        sucursalSQL = """
+        profesionalSQL = """
         SELECT id, descripcion
-        FROM sucursales WHERE id=%s
+        FROM profesionales WHERE id=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(sucursalSQL, (id,))
-            sucursalEncontrada = cur.fetchone() # Obtener una sola fila
-            if sucursalEncontrada:
+            cur.execute(profesionalSQL, (id,))
+            profesionalEncontrada = cur.fetchone() # Obtener una sola fila
+            if profesionalEncontrada:
                 return {
-                        "id": sucursalEncontrada[0],
-                        "descripcion": sucursalEncontrada[1]
-                    }  # Retornar los datos de la sucursal
+                        "id": profesionalEncontrada[0],
+                        "descripcion": profesionalEncontrada[1]
+                    }  # Retornar los datos del profesional
             else:
-                return None # Retornar None si no se encuentra la sucursal
+                return None # Retornar None si no se encuentra el profesional
         except Exception as e:
-            app.logger.error(f"Error al obtener sucursal: {str(e)}")
+            app.logger.error(f"Error al obtener profesional: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarSucursal(self, descripcion):
+    def guardarProfesional(self, descripcion):
 
-        insertSucursalSQL = """
-        INSERT INTO sucursales(descripcion) VALUES(%s) RETURNING id
+        insertProfesionalSQL = """
+        INSERT INTO profesionales(descripcion) VALUES(%s) RETURNING id
         """
 
         conexion = Conexion()
@@ -69,14 +69,14 @@ class SucursalDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertSucursalSQL, (descripcion,))
-            sucursal_id = cur.fetchone()[0]
+            cur.execute(insertProfesionalSQL, (descripcion,))
+            profesional_id = cur.fetchone()[0]
             con.commit() # se confirma la insercion
-            return sucursal_id
+            return profesional_id
 
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar sucursal: {str(e)}")
+            app.logger.error(f"Error al insertar profesional: {str(e)}")
             con.rollback() # retroceder si hubo error
             return False
 
@@ -85,10 +85,10 @@ class SucursalDao:
             cur.close()
             con.close()
 
-    def updateSucursal(self, id, descripcion):
+    def updateProfesional(self, id, descripcion):
 
-        updateSucursalSQL = """
-        UPDATE sucursales
+        updateProfesionalSQL = """
+        UPDATE profesionales
         SET descripcion=%s
         WHERE id=%s
         """
@@ -98,14 +98,14 @@ class SucursalDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateSucursalSQL, (descripcion, id,))
+            cur.execute(updateProfesionalSQL, (descripcion, id,))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas
             con.commit()
 
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar sucursal: {str(e)}")
+            app.logger.error(f"Error al actualizar profesional: {str(e)}")
             con.rollback()
             return False
 
@@ -113,10 +113,10 @@ class SucursalDao:
             cur.close()
             con.close()
 
-    def deleteSucursal(self, id):
+    def deleteProfesional(self, id):
 
-        updateSucursalSQL = """
-        DELETE FROM sucursales
+        updateProfesionalSQL = """
+        DELETE FROM profesionales
         WHERE id=%s
         """
 
@@ -125,14 +125,14 @@ class SucursalDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateSucursalSQL, (id,))
+            cur.execute(updateProfesionalSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al eliminar sucursal: {str(e)}")
+            app.logger.error(f"Error al eliminar profesional: {str(e)}")
             con.rollback()
             return False
 

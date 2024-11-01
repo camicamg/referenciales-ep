@@ -50,30 +50,36 @@ def getPersona(persona_id):
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-# Agrega una nueva persona
+# Agrega un nuevo persona
 @perapi.route('/personas', methods=['POST'])
 def addPersona():
     data = request.get_json()
     perdao = PersonaDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['descripcion']
+    campos_requeridos = ['nombre', 'direccion', 'telefono', 'correo_electronico', 'sexo']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
-        if campo not in data or data[campo] is None or len(data[campo].strip()) == 0:
+        if campo not in data or data[campo] is None or len(str(data[campo]).strip()) == 0:
             return jsonify({
                             'success': False,
                             'error': f'El campo {campo} es obligatorio y no puede estar vacío.'
                             }), 400
 
     try:
-        descripcion = data['descripcion'].upper()
-        persona_id = perdao.guardarPersona(descripcion)
+        nombre = data['nombre'].upper()
+        direccion = data['direccion'].upper()
+        telefono = data['telefono']
+        correo_electronico = data['correo_electronico'].lower()
+        sexo = data['sexo'].lower()
+
+        persona_id = perdao.guardarPersona(nombre, direccion, telefono, correo_electronico, sexo)
         if persona_id is not None:
             return jsonify({
                 'success': True,
-                'data': {'id': persona_id, 'descripcion': descripcion},
+                'data': {'id': persona_id, 'nombre': nombre, 'direccion': direccion, 
+                         'telefono': telefono, 'correo_electronico': correo_electronico, 'sexo': sexo},
                 'error': None
             }), 201
         else:
@@ -86,26 +92,33 @@ def addPersona():
         }), 500
 
 @perapi.route('/personas/<int:persona_id>', methods=['PUT'])
-def updatePesona(persona_id):
+def updatePersona(persona_id):
     data = request.get_json()
     perdao = PersonaDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
-    campos_requeridos = ['descripcion']
+    campos_requeridos = ['nombre', 'direccion', 'telefono', 'correo_electronico', 'sexo']
 
     # Verificar si faltan campos o son vacíos
     for campo in campos_requeridos:
-        if campo not in data or data[campo] is None or len(data[campo].strip()) == 0:
+        if campo not in data or data[campo] is None or len(str(data[campo]).strip()) == 0:
             return jsonify({
                             'success': False,
                             'error': f'El campo {campo} es obligatorio y no puede estar vacío.'
                             }), 400
-    descripcion = data['descripcion']
+
+    nombre = data['nombre'].upper()
+    direccion = data['direccion'].upper()
+    telefono = data['telefono']
+    correo_electronico = data['correo_electronico'].lower()
+    sexo = data['sexo'].lower()
+
     try:
-        if perdao.updatePersona(persona_id, descripcion.upper()):
+        if perdao.updatePersona(persona_id, nombre, direccion, telefono, correo_electronico, sexo):
             return jsonify({
                 'success': True,
-                'data': {'id': persona_id, 'descripcion': descripcion},
+                'data': {'id': persona_id, 'nombre': nombre, 'direccion': direccion, 
+                         'telefono': telefono, 'correo_electronico': correo_electronico, 'sexo': sexo},
                 'error': None
             }), 200
         else:
@@ -129,7 +142,7 @@ def deletePersona(persona_id):
         if perdao.deletePersona(persona_id):
             return jsonify({
                 'success': True,
-                'mensaje': f'Persona con ID {persona_id} eliminada correctamente.',
+                'mensaje': f'Persona con ID {persona_id} eliminado correctamente.',
                 'error': None
             }), 200
         else:

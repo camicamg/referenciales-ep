@@ -1,60 +1,60 @@
 from flask import Blueprint, request, jsonify, current_app as app
-from app.dao.referenciales.sexo.SexoDao import SexoDao
+from app.dao.referenciales.tipolesion.TipolesionDao import TipolesionDao
 
-sexapi = Blueprint('sexapi', __name__)
+tipapi = Blueprint('tipapi', __name__)
 
-# Trae todos los sexos 
-@sexapi.route('/sexos', methods=['GET'])
-def getSexos():
-    sexdao = SexoDao()
+# Trae todos los tipolesiones
+@tipapi.route('/tipolesiones', methods=['GET'])
+def getTipolesiones():
+    tipdao = TipolesionDao()
 
     try:
-        sexos = sexdao.getSexos()
+        tipolesiones = tipdao.getTipolesiones()
 
         return jsonify({
             'success': True,
-            'data': sexos,
+            'data': tipolesiones,
             'error': None
         }), 200
 
     except Exception as e:
-        app.logger.error(f"Error al obtener todos los sexos: {str(e)}")
+        app.logger.error(f"Error al obtener todas las tipolesiones: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@sexapi.route('/sexos/<int:sexo_id>', methods=['GET'])
-def getCSexo(sexo_id):
-    sexdao = SexoDao()
+@tipapi.route('/tipolesiones/<int:tipolesion_id>', methods=['GET'])
+def getTipolesion(tipolesion_id):
+    tipdao = TipolesionDao()
 
     try:
-        sexo = sexdao.getSexoById(sexo_id)
+        tipolesion = tipdao.getTipolesionById(tipolesion_id)
 
-        if sexo:
+        if tipolesion:
             return jsonify({
                 'success': True,
-                'data': sexo,
+                'data': tipolesion,
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró el sexo con el ID proporcionado.'
+                'error': 'No se encontró el tipolesion con el ID proporcionado.'
             }), 404
 
     except Exception as e:
-        app.logger.error(f"Error al obtener sexo: {str(e)}")
+        app.logger.error(f"Error al obtener tipolesion: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-# Agrega un nuevo sexo
-@sexapi.route('/sexos', methods=['POST'])
-def addSexo():
+# Agrega una nueva tipolesion
+@tipapi.route('/tipolesiones', methods=['POST'])
+def addTipolesion():
     data = request.get_json()
-    sexdao = SexoDao()
+    tipdao = TipolesionDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
     campos_requeridos = ['descripcion']
@@ -69,26 +69,26 @@ def addSexo():
 
     try:
         descripcion = data['descripcion'].upper()
-        sexo_id = sexdao.guardarSexo(descripcion)
-        if sexo_id is not None:
+        tipolesion_id = tipdao.guardarTipolesion(descripcion)
+        if tipolesion_id is not None:
             return jsonify({
                 'success': True,
-                'data': {'id': sexo_id, 'descripcion': descripcion},
+                'data': {'id': tipolesion_id, 'descripcion': descripcion},
                 'error': None
             }), 201
         else:
-            return jsonify({ 'success': False, 'error': 'No se pudo guardar el sexo. Consulte con el administrador.' }), 500
+            return jsonify({ 'success': False, 'error': 'No se pudo guardar el tipolesion. Consulte con el administrador.' }), 500
     except Exception as e:
-        app.logger.error(f"Error al agregar sexo: {str(e)}")
+        app.logger.error(f"Error al agregar tipolesion: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@sexapi.route('/sexos/<int:sexo_id>', methods=['PUT'])
-def updateSexo(sexo_id):
+@tipapi.route('/tipolesiones/<int:tipolesion_id>', methods=['PUT'])
+def updateTipolesion(tipolesion_id):
     data = request.get_json()
-    sexdao = SexoDao()
+    tipdao = TipolesionDao()
 
     # Validar que el JSON no esté vacío y tenga las propiedades necesarias
     campos_requeridos = ['descripcion']
@@ -102,44 +102,44 @@ def updateSexo(sexo_id):
                             }), 400
     descripcion = data['descripcion']
     try:
-        if sexdao.updateSexo(sexo_id, descripcion.upper()):
+        if tipdao.updateTipolesion(tipolesion_id, descripcion.upper()):
             return jsonify({
                 'success': True,
-                'data': {'id': sexo_id, 'descripcion': descripcion},
+                'data': {'id': tipolesion_id, 'descripcion': descripcion},
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró el sexo con el ID proporcionado o no se pudo actualizar.'
+                'error': 'No se encontró el tipolesion con el ID proporcionado o no se pudo actualizar.'
             }), 404
     except Exception as e:
-        app.logger.error(f"Error al actualizar sexo: {str(e)}")
+        app.logger.error(f"Error al actualizar tipolesion: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'
         }), 500
 
-@sexapi.route('/sexos/<int:sexo_id>', methods=['DELETE'])
-def deleteSexo(sexo_id):
-    sexdao = SexoDao()
+@tipapi.route('/tipolesiones/<int:tipolesion_id>', methods=['DELETE'])
+def deleteTipolesion(tipolesion_id):
+    tipdao = TipolesionDao()
 
     try:
-        # Usar el retorno de eliminarSexo para determinar el éxito
-        if sexdao.deleteSexo(sexo_id):
+        # Usar el retorno de eliminarTipolesion para determinar el éxito
+        if tipdao.deleteTipolesion(tipolesion_id):
             return jsonify({
                 'success': True,
-                'mensaje': f'Sexo con ID {sexo_id} eliminada correctamente.',
+                'mensaje': f'Tipolesion con ID {tipolesion_id} eliminada correctamente.',
                 'error': None
             }), 200
         else:
             return jsonify({
                 'success': False,
-                'error': 'No se encontró el sexo con el ID proporcionado o no se pudo eliminar.'
+                'error': 'No se encontró el tipolesion con el ID proporcionado o no se pudo eliminar.'
             }), 404
 
     except Exception as e:
-        app.logger.error(f"Error al eliminar sexo: {str(e)}")
+        app.logger.error(f"Error al eliminar tipolesion: {str(e)}")
         return jsonify({
             'success': False,
             'error': 'Ocurrió un error interno. Consulte con el administrador.'

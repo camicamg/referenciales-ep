@@ -2,65 +2,65 @@
 from flask import current_app as app
 from app.conexion.Conexion import Conexion
 
-class SucursalDao:
+class TipolesionDao:
 
-    def get_sucursales(self):
+    def getTipolesiones(self):
 
-        sucursalSQL = """
+        tipolesionSQL = """
         SELECT id, descripcion
-        FROM sucursales
+        FROM tipolesiones
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(sucursalSQL)
-            sucursales = cur.fetchall() # trae datos de la bd
+            cur.execute(tipolesionSQL)
+            tipolesiones = cur.fetchall() # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': sucursal[0], 'descripcion': sucursal[1]} for sucursal in sucursales]
+            return [{'id': tipolesion[0], 'descripcion': tipolesion[1]} for tipolesion in tipolesiones]
 
         except Exception as e:
-            app.logger.error(f"Error al obtener todas las sucursales: {str(e)}")
+            app.logger.error(f"Error al obtener todas las tipolesiones: {str(e)}")
             return []
 
         finally:
             cur.close()
             con.close()
 
-    def getSucursalById(self, id):
+    def getTipolesionById(self, id):
 
-        sucursalSQL = """
+        tipolesionSQL = """
         SELECT id, descripcion
-        FROM sucursales WHERE id=%s
+        FROM tipolesiones WHERE id=%s
         """
         # objeto conexion
         conexion = Conexion()
         con = conexion.getConexion()
         cur = con.cursor()
         try:
-            cur.execute(sucursalSQL, (id,))
-            sucursalEncontrada = cur.fetchone() # Obtener una sola fila
-            if sucursalEncontrada:
+            cur.execute(tipolesionSQL, (id,))
+            tipolesionEncontrada = cur.fetchone() # Obtener una sola fila
+            if tipolesionEncontrada:
                 return {
-                        "id": sucursalEncontrada[0],
-                        "descripcion": sucursalEncontrada[1]
-                    }  # Retornar los datos de la sucursal
+                        "id": tipolesionEncontrada[0],
+                        "descripcion": tipolesionEncontrada[1]
+                    }  # Retornar los datos del tipolesion
             else:
-                return None # Retornar None si no se encuentra la sucursal
+                return None # Retornar None si no se encuentra el tipolesion
         except Exception as e:
-            app.logger.error(f"Error al obtener sucursal: {str(e)}")
+            app.logger.error(f"Error al obtener tipolesion: {str(e)}")
             return None
 
         finally:
             cur.close()
             con.close()
 
-    def guardarSucursal(self, descripcion):
+    def guardarTipolesion(self, descripcion):
 
-        insertSucursalSQL = """
-        INSERT INTO sucursales(descripcion) VALUES(%s) RETURNING id
+        insertTipolesionSQL = """
+        INSERT INTO tipolesiones(descripcion) VALUES(%s) RETURNING id
         """
 
         conexion = Conexion()
@@ -69,14 +69,14 @@ class SucursalDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertSucursalSQL, (descripcion,))
-            sucursal_id = cur.fetchone()[0]
+            cur.execute(insertTipolesionSQL, (descripcion,))
+            tipolesion_id = cur.fetchone()[0]
             con.commit() # se confirma la insercion
-            return sucursal_id
+            return tipolesion_id
 
         # Si algo fallo entra aqui
         except Exception as e:
-            app.logger.error(f"Error al insertar sucursal: {str(e)}")
+            app.logger.error(f"Error al insertar tipolesion: {str(e)}")
             con.rollback() # retroceder si hubo error
             return False
 
@@ -85,10 +85,10 @@ class SucursalDao:
             cur.close()
             con.close()
 
-    def updateSucursal(self, id, descripcion):
+    def updateTipolesion(self, id, descripcion):
 
-        updateSucursalSQL = """
-        UPDATE sucursales
+        updateTipolesionSQL = """
+        UPDATE tipolesiones
         SET descripcion=%s
         WHERE id=%s
         """
@@ -98,14 +98,14 @@ class SucursalDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateSucursalSQL, (descripcion, id,))
+            cur.execute(updateTipolesionSQL, (descripcion, id,))
             filas_afectadas = cur.rowcount # Obtener el número de filas afectadas
             con.commit()
 
             return filas_afectadas > 0 # Retornar True si se actualizó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al actualizar sucursal: {str(e)}")
+            app.logger.error(f"Error al actualizar tipolesion: {str(e)}")
             con.rollback()
             return False
 
@@ -113,10 +113,10 @@ class SucursalDao:
             cur.close()
             con.close()
 
-    def deleteSucursal(self, id):
+    def deleteTipolesion(self, id):
 
-        updateSucursalSQL = """
-        DELETE FROM sucursales
+        updateTipolesionSQL = """
+        DELETE FROM tipolesiones
         WHERE id=%s
         """
 
@@ -125,14 +125,14 @@ class SucursalDao:
         cur = con.cursor()
 
         try:
-            cur.execute(updateSucursalSQL, (id,))
+            cur.execute(updateTipolesionSQL, (id,))
             rows_affected = cur.rowcount
             con.commit()
 
             return rows_affected > 0  # Retornar True si se eliminó al menos una fila
 
         except Exception as e:
-            app.logger.error(f"Error al eliminar sucursal: {str(e)}")
+            app.logger.error(f"Error al eliminar tipolesion: {str(e)}")
             con.rollback()
             return False
 

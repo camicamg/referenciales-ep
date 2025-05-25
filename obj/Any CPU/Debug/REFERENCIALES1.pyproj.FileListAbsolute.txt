@@ -1,0 +1,3 @@
+C:\Users\yulitor\Desktop\Trabajo_CAMI\REFERENCIALES\obj\Any CPU\Debug\REFERENCIALES1.pyproj.CoreCompileInputs.cache
+C:\Users\yulitor\Desktop\Trabajo_CAMI\REFERENCIALES\bin\Microsoft.PythonTools.WebRole.dll
+C:\Users\yulitor\Desktop\Trabajo_CAMI\REFERENCIALES\bin\wfastcgi.py

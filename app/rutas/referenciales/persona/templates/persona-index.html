@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-    
+
 {% block titulo %}
-Personas
+Persona
 {% endblock %}
 
 {% block contenido %}
@@ -11,17 +11,17 @@ Personas
     <!-- tarjeta -->
     <div class="card">
       <div class="card-header">
-        <button type="button" class="btn btn-primary" id="btnAgregar">Agregar</button>
+        <button type="button" class="btn btn-outline-primary" id="btnAgregar">Agregar</button>
       </div>
       <div class="card-body">
         <table class="table table-striped" id="tbl">
           <thead>
             <tr>
               <th>Nombre</th>
-              <th>Dirección</th>
+              <th>Apellido</th> <!-- Agregado campo 'apellido' -->
               <th>Teléfono</th>
-              <th>Correo Electrónico</th>
-              <th>Sexo</th>
+              <th>Correo</th>
+              <th>Dirección</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -33,7 +33,6 @@ Personas
 
     <!-- El formulario -->
     <div class="modal" id="modalFormulario">
-      <!-- La clase modal-dialog-centered centra el modal -->
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
 
@@ -51,21 +50,20 @@ Personas
               <input type="text" class="form-control" placeholder="Ingrese el nombre" id="txtNombre">
             </div>
             <div class="form-group">
-              <label for="txtDireccion">Dirección:</label>
-              <input type="text" class="form-control" placeholder="Ingrese la dirección" id="txtDireccion">
+              <label for="txtApellido">Apellido:</label> <!-- Nuevo campo 'apellido' -->
+              <input type="text" class="form-control" placeholder="Ingrese el apellido" id="txtApellido">
             </div>
             <div class="form-group">
               <label for="txtTelefono">Teléfono:</label>
               <input type="text" class="form-control" placeholder="Ingrese el teléfono" id="txtTelefono">
             </div>
             <div class="form-group">
-              <label for="txtCorreoElectronico">Correo Electrónico:</label>
-              <input type="email" class="form-control" placeholder="Ingrese el correo electrónico" id="txtCorreoElectronico">
+              <label for="txtCorreo">Correo:</label>
+              <input type="email" class="form-control" placeholder="Ingrese el correo" id="txtCorreo">
             </div>
             <div class="form-group">
-              <input type="hidden" id="txtIdPersona">
-              <label for="txtSexo">Sexo:</label>
-              <input type="text" class="form-control" placeholder="Ingrese el sexo" id="txtSexo">
+              <label for="txtDireccion">Dirección:</label>
+              <input type="text" class="form-control" placeholder="Ingrese la dirección" id="txtDireccion">
             </div>
           </div>
 
@@ -92,7 +90,6 @@ Personas
 
 {% block js %}
 <script>
-
   const initDatatable = () => {
     $('#tbl').DataTable({
       language: {
@@ -100,14 +97,14 @@ Personas
       },
       ajax:'/api/v1/personas',
       columns: [
-        { data: 'nombre' },
-        { data: 'direccion' },
+        { data: 'nombre' }, // Agregado campo 'nombre'
+        { data: 'apellido' }, // Agregado campo 'apellido'
         { data: 'telefono' },
-        { data: 'correo_electronico' },
-        { data: 'sexo' },
+        { data: 'correo' },
+        { data: 'direccion' },
         { data: function(row) {
-            return `<button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id}">Editar</button>
-                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`
+            return `<button type="button" name="btn_editar" class="btn btn-outline-primary" data-id="${row.id}">Editar</button>
+                    <button type="button" name="btn_eliminar" class="btn btn-outline-warning" data-id="${row.id}">Eliminar</button>`
           }
         }
       ]
@@ -116,15 +113,13 @@ Personas
 
   const agregar = () => {
     $('#btnAgregar').on('click', function(){
-      // Setear un título a modal
-      $('#modalTitle').text("Agregar una Persona");
-      // inicia ventana modal
+      $('#modalTitle').text("Agregar Persona");
       $('#txtIdPersona').val("");
-      $('#txtNombre').val("");
-      $('#txtDireccion').val("");
+      $('#txtNombre').val(""); // Limpiar campo nombre
+      $('#txtApellido').val(""); // Limpiar campo apellido
       $('#txtTelefono').val("");
-      $('#txtCorreoElectronico').val("");
-      $('#txtSexo').val("");
+      $('#txtCorreo').val("");
+      $('#txtDireccion').val("");
       $('#modalFormulario').modal();
     });
   }
@@ -132,11 +127,11 @@ Personas
   const guardar = () => {
     $('#btnGuardar').on('click', function() {
       const idPersona = $('#txtIdPersona').val();
-      const nuevoNombre = $('#txtNombre').val();
-      const nuevaDireccion = $('#txtDireccion').val();
+      const nuevoNombre = $('#txtNombre').val(); // Obtener nombre
+      const nuevoApellido = $('#txtApellido').val(); // Obtener apellido
       const nuevoTelefono = $('#txtTelefono').val();
-      const nuevoCorreoElectronico = $('#txtCorreoElectronico').val();
-      const nuevoSexo = $('#txtSexo').val();
+      const nuevoCorreo = $('#txtCorreo').val();
+      const nuevaDireccion = $('#txtDireccion').val();
       const tabla = $('#tbl').DataTable();
 
       if(idPersona) {
@@ -145,19 +140,19 @@ Personas
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ nombre: nuevoNombre, direccion: nuevaDireccion, telefono: nuevoTelefono, correo_electronico: nuevoCorreoElectronico, sexo: nuevoSexo })
+          }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, telefono: nuevoTelefono, correo: nuevoCorreo, direccion: nuevaDireccion }) // Incluir nombre y apellido
         })
         .then(resp => resp.json())
         .then(data => {
           if(data && !data.error && data.success) {
             tabla.ajax.reload();
-            Swal.fire("Actualizado", "La persona ha sido actualizado correctamente.", "success");
+            Swal.fire("Actualizado", "La persona ha sido actualizada correctamente.", "success");
           } else {
             Swal.fire(data.error);
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al actualizar la persona.", "error");
+          Swal.fire("Error", "Ocurrió un error al actualizar a la persona.", "error");
         });
       } else {
         // insert
@@ -165,7 +160,7 @@ Personas
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
-          }, body: JSON.stringify({ nombre: nuevoNombre, direccion: nuevaDireccion, telefono: nuevoTelefono, correo_electronico: nuevoCorreoElectronico, sexo: nuevoSexo })
+          }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, telefono: nuevoTelefono, correo: nuevoCorreo, direccion: nuevaDireccion }) // Incluir nombre y apellido
         })
         .then(resp => resp.json())
         .then(data => {
@@ -177,21 +172,20 @@ Personas
           }
         }).catch(err => {
           console.error(err);
-          Swal.fire("Error", "Ocurrió un error al guardar la persona.", "error");
+          Swal.fire("Error", "Ocurrió un error al guardar persona.", "error");
         });
       }
-      $('#txtNombre').val("");
-      $('#txtDireccion').val("");
+      $('#txtNombre').val(""); // Limpiar campo nombre
+      $('#txtApellido').val(""); // Limpiar campo apellido
       $('#txtTelefono').val("");
-      $('#txtCorreoElectronico').val("");
-      $('#txtSexo').val("");
+      $('#txtCorreo').val("");
+      $('#txtDireccion').val("");
       $('#modalFormulario').modal("hide");
     });
   }
 
   const editar = () => {
     $('#tbl').on('click', 'button[name="btn_editar"]',function(){
-       // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas editar este registro?",
         showCancelButton: true,
@@ -199,8 +193,7 @@ Personas
         cancelButtonText: `No`
       }).then((result) => {
         if (result.isConfirmed) {
-          //Swal.fire("Saved!", "", "success");
-          $('#modalTitle').text("Editar una Persona");
+          $('#modalTitle').text("Editar Persona");
 
           const idPersona = $(this).data('id');
           $('#txtIdPersona').val(idPersona);
@@ -213,11 +206,11 @@ Personas
           })
           .then(resp => resp.json())
           .then(data => {
-            $('#txtNombre').val(data.data.nombre);
-            $('#txtDireccion').val(data.data.direccion);
+            $('#txtNombre').val(data.data.nombre); // Obtener nombre
+            $('#txtApellido').val(data.data.apellido); // Obtener apellido
             $('#txtTelefono').val(data.data.telefono);
-            $('#txtCorreoElectronico').val(data.data.correo_electronico);
-            $('#txtSexo').val(data.data.sexo);
+            $('#txtCorreo').val(data.data.correo);
+            $('#txtDireccion').val(data.data.direccion);
             $('#modalFormulario').modal();
           });
         }
@@ -228,7 +221,6 @@ Personas
   const eliminar = () => {
     $('#tbl').on('click', 'button[name="btn_eliminar"]',function(){
       const idPersona = $(this).data('id');
-      // Mostrar mensaje de confirmación usando sweetalert
       Swal.fire({
         title: "¿Deseas eliminar este registro?",
         showCancelButton: true,
@@ -253,11 +245,10 @@ Personas
               Swal.fire(data.error);
             }
           }).catch(err => {
-            Swal.fire("Error", "Ocurrió un error al eliminar la persona.", "error");
+            Swal.fire("Error", "Ocurrió un error al eliminar persona.", "error");
           });
         }
       });
-
     });
   }
 

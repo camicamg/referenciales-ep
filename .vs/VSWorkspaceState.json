@@ -1,0 +1,15 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\app",
+    "\\app\\conexion",
+    "\\app\\dao",
+    "\\app\\dao\\referenciales",
+    "\\app\\dao\\referenciales\\nacionalidad",
+    "\\app\\rutas",
+    "\\app\\rutas\\referenciales",
+    "\\app\\templates"
+  ],
+  "SelectedNode": "\\app\\dao\\referenciales\\departamento",
+  "PreviewInSolutionExplorer": false
+}

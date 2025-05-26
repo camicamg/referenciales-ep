@@ -5,8 +5,9 @@ from app.conexion.Conexion import Conexion
 class PersonaDao:
 
     def getPersonas(self):
+        #id_persona nombres apellidos fecha_ingreso
         personaSQL = """
-        SELECT id, nombre, apellido, telefono, correo, direccion
+        SELECT id_persona, nombres, apellidos, fecha_ingreso, ci
         FROM personas
         """
         # objeto conexion
@@ -18,7 +19,7 @@ class PersonaDao:
             personas = cur.fetchall()  # trae datos de la bd
 
             # Transformar los datos en una lista de diccionarios
-            return [{'id': persona[0], 'nombre': persona[1], 'apellido': persona[2], 'telefono': persona[3], 'correo': persona[4], 'direccion': persona[5]} for persona in personas]
+            return [{'id': persona[0],'nombres_completo': f"{persona[1]} {persona[2]}", 'nombres': persona[1], 'apellidos': persona[2], 'fecha_ingreso': persona[3].strftime('%d/%m/%Y'), 'ci': persona[4]} for persona in personas]
 
         except Exception as e:
             app.logger.error(f"Error al obtener todas las personas: {str(e)}")
@@ -29,9 +30,10 @@ class PersonaDao:
             con.close()
 
     def getPersonaById(self, id):
+        #id_persona nombres apellidos fecha_ingreso ci
         personaSQL = """
-        SELECT id, nombre, apellido, telefono, correo, direccion
-        FROM personas WHERE id=%s
+        SELECT id_persona, nombres, apellidos, telefono, correo, direccion, ci
+        FROM personas WHERE id_persona=%s
         """
         # objeto conexion
         conexion = Conexion()
@@ -47,7 +49,8 @@ class PersonaDao:
                     "apellido": personaEncontrada[2],
                     "telefono": personaEncontrada[3],
                     "correo": personaEncontrada[4],
-                    "direccion": personaEncontrada[5]
+                    "direccion": personaEncontrada[5],
+                    "ci":personaEncontrada[6]
                 }  # Retornar los datos de persona
             else:
                 return None  # Retornar None si no se encuentra la persona
@@ -59,9 +62,10 @@ class PersonaDao:
             cur.close()
             con.close()
 
-    def guardarPersona(self, nombre, apellido, telefono, correo, direccion):
+    def guardarPersona(self, nombre, apellido, telefono, correo, direccion,ci):
+        usuId = 1
         insertPersonaSQL = """
-        INSERT INTO personas(nombre, apellido, telefono, correo, direccion) VALUES(%s, %s, %s, %s, %s) RETURNING id
+        INSERT INTO personas(nombres, apellidos, telefono, correo, direccion, ci, creacion_fecha, creacion_hora, creacion_usuario ) VALUES(%s, %s, %s, %s, %s, %s, CURRENT_DATE, NOW(), %s) RETURNING id_persona
         """
 
         conexion = Conexion()
@@ -70,9 +74,11 @@ class PersonaDao:
 
         # Ejecucion exitosa
         try:
-            cur.execute(insertPersonaSQL, (nombre, apellido, telefono, correo, direccion))
+            cur.execute(insertPersonaSQL, (nombre, apellido, telefono, correo, direccion, ci, usuId))
             persona_id = cur.fetchone()[0]
             con.commit()  # se confirma la insercion
+            print("Commit ejecutado correctamente!!!", persona_id)
+
             return persona_id
 
         # Si algo fallo entra aqui
@@ -89,8 +95,8 @@ class PersonaDao:
     def updatePersona(self, id, nombre, apellido, telefono, correo, direccion):
         updatePersonaSQL = """
         UPDATE personas
-        SET nombre=%s, apellido=%s, telefono=%s, correo=%s, direccion=%s
-        WHERE id=%s
+        SET nombreS=%s, apellidoS=%s, telefono=%s, correo=%s, direccion=%s
+        WHERE id_persona=%s
         """
 
         conexion = Conexion()
@@ -116,7 +122,7 @@ class PersonaDao:
     def deletePersona(self, id):
         deletePersonaSQL = """
         DELETE FROM personas
-        WHERE id=%s
+        WHERE id_persona=%s
         """
 
         conexion = Conexion()

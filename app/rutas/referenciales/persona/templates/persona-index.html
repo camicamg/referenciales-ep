@@ -97,11 +97,11 @@ Persona
       },
       ajax:'/api/v1/personas',
       columns: [
-        { data: 'nombre' }, // Agregado campo 'nombre'
-        { data: 'apellido' }, // Agregado campo 'apellido'
-        { data: 'telefono' },
-        { data: 'correo' },
-        { data: 'direccion' },
+        { data: 'nombres' }, // Agregado campo 'nombre'
+        { data: 'apellidos' }, // Agregado campo 'apellido'
+        { data: 'id' },
+        { data: 'id' },
+        { data: 'id' },
         { data: function(row) {
             return `<button type="button" name="btn_editar" class="btn btn-outline-primary" data-id="${row.id}">Editar</button>
                     <button type="button" name="btn_eliminar" class="btn btn-outline-warning" data-id="${row.id}">Eliminar</button>`

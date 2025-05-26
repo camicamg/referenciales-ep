@@ -60,7 +60,7 @@ def addPersona():
     personadao = PersonaDao()
 
     # Validar que el JSON tenga los campos requeridos
-    campos_requeridos = ['nombre', 'apellido', 'telefono', 'correo', 'direccion']
+    campos_requeridos = ['nombre', 'apellido', 'telefono', 'correo', 'direccion', 'ci']
 
     for campo in campos_requeridos:
         if campo not in data or data[campo] is None or len(data[campo].strip()) == 0:
@@ -75,7 +75,8 @@ def addPersona():
         telefono = data['telefono']
         correo = data['correo']
         direccion = data['direccion']
-        persona_id = personadao.guardarPersona(nombre, apellido, telefono, correo, direccion)
+        ci = data['ci']
+        persona_id = personadao.guardarPersona(nombre, apellido, telefono, correo, direccion, ci)
 
         if persona_id is not None:
             return jsonify({
@@ -143,6 +144,7 @@ def updatePersona(persona_id):
 # Elimina una persona por ID
 @persapi.route('/personas/<int:persona_id>', methods=['DELETE'])
 def deletePersona(persona_id):
+    print('eliminando persona!!')
     personadao = PersonaDao()
 
     try:

@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+
+{% block titulo %}
+<div class="container mt-4">
+    <h3>Registrar Formularios de admisi&oacute;n</h3>
+</div>
+{% endblock %}
+{% block contenido %}
+<div class="container mt-4">
+    <h3>Registrar Formularios de admisi&oacute;n</h3>
+    <!-- tarjeta -->
+    <div class="card">
+        <div class="card-header">
+            <button type="button" class="btn btn-primary" id="btnAgregar">Agregar</button>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped" id="tbl">
+                <thead>
+                    <tr>
+                        <th>Persona</th>
+                        <th>Documento</th>
+                        <th>Fecha de Ingreso</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <!-- /tarjeta -->
+    <!-- El formulario -->
+    <div class="modal" id="modalFormulario">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalTitle"></h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" id="txtIdPersona">
+                        <label for="txtNombre">Nombre:</label>
+                        <input type="text" class="form-control" placeholder="Ingrese el nombre" id="txtNombre">
+                    </div>
+                    <div class="form-group">
+                        <label for="txtApellido">Apellido:</label> <!-- Nuevo campo 'apellido' -->
+                        <input type="text" class="form-control" placeholder="Ingrese el apellido" id="txtApellido">
+                    </div>
+                    <div class="form-group">
+                        <label for="txtApellido">CI</label> <!-- Nuevo campo 'ci' -->
+                        <input type="text" class="form-control" placeholder="Ingrese el nro de ci" id="txtCi">
+                    </div>
+                    <div class="form-group">
+                        <label for="txtTelefono">Teléfono:</label>
+                        <input type="text" class="form-control" placeholder="Ingrese el teléfono" id="txtTelefono">
+                    </div>
+                    <div class="form-group">
+                        <label for="txtCorreo">Correo:</label>
+                        <input type="email" class="form-control" placeholder="Ingrese el correo" id="txtCorreo">
+                    </div>
+                    <div class="form-group">
+                        <label for="txtDireccion">Dirección:</label>
+                        <input type="text" class="form-control" placeholder="Ingrese la dirección" id="txtDireccion">
+                    </div>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="btnGuardar">Guardar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 d-none" id="rowAlerta">
+        <div class="col col-md-12">
+            <div class="alert alert-success">
+                <strong>Registro Exitoso!</strong>
+                <div class="row" id="mostrarAlerta"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+
+  const initDatatable = () => {
+    $('#tbl').DataTable({
+      language: {
+        url: "{{ url_for('static', filename='vendor/datatables/es-ES.json') }}",
+      },
+      ajax:'/api/v1/personas',
+      columns: [
+          { data: 'nombres_completo' },
+          { data: 'ci' },
+          { data: 'fecha_ingreso' },
+        { data: function(row) {
+            return `<button type="button" name="btn_ver" class="btn btn-primary" data-id="${row.id}">Ver</button>
+                    <button type="button" name="btn_editar" class="btn btn-primary" data-id="${row.id}">Editar</button>
+                    <button type="button" name="btn_eliminar" class="btn btn-danger" data-id="${row.id}">Eliminar</button>`
+          }
+        }
+      ]
+    });
+  }
+
+    const agregar = () => {
+        $('#btnAgregar').on('click', function () {
+            $('#modalTitle').text("Agregar Persona");
+            $('#txtIdPersona').val("");
+            $('#txtNombre').val(""); // Limpiar campo nombre
+            $('#txtApellido').val(""); // Limpiar campo apellido
+            $('#txtCi').val(""); // Limpiar campo ci
+            $('#txtTelefono').val("");
+            $('#txtCorreo').val("");
+            $('#txtDireccion').val("");
+            $('#modalFormulario').modal();
+        });
+    }
+
+    const guardar = () => {
+        $('#btnGuardar').on('click', function () {
+            const idPersona = $('#txtIdPersona').val();
+            const nuevoNombre = $('#txtNombre').val(); // Obtener nombre
+            const nuevoApellido = $('#txtApellido').val(); // Obtener apellido
+            const nuevoCi = $('#txtCi').val(); // Obtener apellido
+            const nuevoTelefono = $('#txtTelefono').val();
+            const nuevoCorreo = $('#txtCorreo').val();
+            const nuevaDireccion = $('#txtDireccion').val();
+            const tabla = $('#tbl').DataTable();
+
+            if (idPersona) {
+                // update
+                fetch(`/api/v1/personas/${idPersona}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, telefono: nuevoTelefono, correo: nuevoCorreo, direccion: nuevaDireccion, ci: nuevoCi }) // Incluir nombre y apellido
+                })
+                    .then(resp => resp.json())
+                    .then(data => {
+                        if (data && !data.error && data.success) {
+                            tabla.ajax.reload();
+                            Swal.fire("Actualizado", "La persona ha sido actualizada correctamente.", "success");
+                        } else {
+                            Swal.fire(data.error);
+                        }
+                    }).catch(err => {
+                        console.error(err);
+                        Swal.fire("Error", "Ocurrió un error al actualizar a la persona.", "error");
+                    });
+            } else {
+                // insert
+                fetch(`/api/v1/personas`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, telefono: nuevoTelefono, correo: nuevoCorreo, direccion: nuevaDireccion, ci: nuevoCi }) // Incluir nombre y apellido
+                })
+                    .then(resp => resp.json())
+                    .then(data => {
+                        if (data && !data.error && data.success) {
+                            tabla.ajax.reload();
+                            Swal.fire("Agregado", "La persona ha sido agregada correctamente.", "success");
+                        } else {
+                            Swal.fire(data.error);
+                        }
+                    }).catch(err => {
+                        console.error(err);
+                        Swal.fire("Error", "Ocurrió un error al guardar persona.", "error");
+                    });
+            }
+            $('#txtNombre').val(""); // Limpiar campo nombre
+            $('#txtApellido').val(""); // Limpiar campo apellido
+            $('#txtCi').val(""); // Limpiar campo ci
+            $('#txtTelefono').val("");
+            $('#txtCorreo').val("");
+            $('#txtDireccion').val("");
+            $('#modalFormulario').modal("hide");
+        });
+    }
+
+    const editar = () => {
+        $('#tbl').on('click', 'button[name="btn_editar"]', function () {
+            $('.modal-footer').show();
+            $('.modal-body input').prop('readonly', false);
+            Swal.fire({
+                title: "¿Deseas editar este registro?",
+                showCancelButton: true,
+                confirmButtonText: "Si",
+                cancelButtonText: `No`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#modalTitle').text("Editar Persona");
+
+                    const idPersona = $(this).data('id');
+                    $('#txtIdPersona').val(idPersona);
+
+                    fetch(`/api/v1/personas/${idPersona}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(resp => resp.json())
+                        .then(data => {
+                            $('#txtNombre').val(data.data.nombre); // Obtener nombre
+                            $('#txtApellido').val(data.data.apellido); // Obtener apellido
+                            $('#txtCi').val(data.data.ci); // Obtener ci
+                            $('#txtTelefono').val(data.data.telefono);
+                            $('#txtCorreo').val(data.data.correo);
+                            $('#txtDireccion').val(data.data.direccion);
+                            $('#modalFormulario').modal();
+                        });
+                }
+            });
+        });
+    }
+    const ver = () => {
+        $('#tbl').on('click', 'button[name="btn_ver"]', function () {
+            $('#modalTitle').text("Persona");
+            const idPersona = $(this).data('id');
+            fetch(`/api/v1/personas/${idPersona}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(resp => resp.json())
+                .then(data => {
+                    $('#txtNombre').val(data.data.nombre); // Obtener nombre
+                    $('#txtApellido').val(data.data.apellido); // Obtener apellido
+                    $('#txtCi').val(data.data.ci); // Obtener ci
+                    $('#txtTelefono').val(data.data.telefono);
+                    $('#txtCorreo').val(data.data.correo);
+                    $('#txtDireccion').val(data.data.direccion);
+                    $('.modal-footer').hide();
+                    $('.modal-body input').prop('readonly', true);
+                    $('#modalFormulario').modal();
+                });
+        });
+    }
+
+    const eliminar = () => {
+        $('#tbl').on('click', 'button[name="btn_eliminar"]', function () {
+            const idPersona = $(this).data('id');
+            Swal.fire({
+                title: "¿Deseas eliminar este registro?",
+                showCancelButton: true,
+                confirmButtonText: "Si",
+                cancelButtonText: `No`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/api/v1/personas/${idPersona}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCsrfToken()
+                        }
+                    })
+                        .then(resp => resp.json())
+                        .then(data => {
+                            if (data && !data.error && data.success) {
+                                const fila = $(this).closest('tr');
+                                const tabla = $('#tbl').DataTable();
+                                tabla.row(fila).remove().draw();
+                                Swal.fire("Eliminado", "", "success");
+                            } else {
+                                Swal.fire(data.error);
+                            }
+                        }).catch(err => {
+                            Swal.fire("Error", "Ocurrió un error al eliminar persona.", "error");
+                        });
+                }
+            });
+        });
+    }
+
+  const addEvents = () => {
+    agregar();
+    guardar();
+    editar();
+    ver();
+    eliminar();
+  }
+
+  $(function() {
+    initDatatable();
+    addEvents();
+  });
+    const getCsrfToken = () => {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    };
+
+</script>
+{% endblock %}

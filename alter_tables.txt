@@ -1,0 +1,4 @@
+ALTER TABLE personas ADD COLUMN fecha_ingreso DATE DEFAULT '2025-01-01';
+ALTER TABLE personas ADD COLUMN telefono varchar DEFAULT '0982123456';
+ALTER TABLE personas ADD COLUMN correo varchar DEFAULT 'correo@correo.net';
+ALTER TABLE personas ADD COLUMN direccion varchar DEFAULT 'mcal lopez y peru';

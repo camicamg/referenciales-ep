@@ -28,7 +28,8 @@ from app.rutas.referenciales.dia.dia_routes import diamod
 from app.rutas.referenciales.horario.horario_routes import hormod
 from app.rutas.referenciales.departamento.departamento_routes import depmod
 
-
+#importar abm
+from app.rutas.abm.abm_routes import abmmod
 
 
 
@@ -43,8 +44,9 @@ app.register_blueprint(diamod, url_prefix=f'{modulo0}/dia')
 app.register_blueprint(hormod, url_prefix=f'{modulo0}/horario')
 app.register_blueprint(depmod, url_prefix=f'{modulo0}/departamento')
 
-
-
+#registrar abm
+modulo1 = '/abm'
+app.register_blueprint(abmmod, url_prefix=f'{modulo1}/abm')
 
 
 

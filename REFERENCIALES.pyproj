@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
     <LaunchProvider>Standard Python launcher</LaunchProvider>
-    <InterpreterId />
+    <InterpreterId>CondaEnv|CondaEnv|yulicami</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
@@ -19,6 +19,7 @@
     <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\rutas\abm\templates\abm-index.html" />
     <Content Include="app\rutas\referenciales\ciudad\templates\ciudad-index.html" />
     <Content Include="app\rutas\referenciales\departamento\templates\departamento-index.html" />
     <Content Include="app\rutas\referenciales\dia\templates\dia-index.html" />
@@ -1739,6 +1740,9 @@
     <Compile Include="app\dao\referenciales\usuario\__init__.py" />
     <Compile Include="app\dao\referenciales\__init__.py" />
     <Compile Include="app\dao\__init__.py" />
+    <Compile Include="app\rutas\abm\abm_routes.py" />
+    <Compile Include="app\rutas\abm\abm_api.py" />
+    <Compile Include="app\rutas\abm\__init__.py" />
     <Compile Include="app\rutas\referenciales\ciudad\ciudad_api.py" />
     <Compile Include="app\rutas\referenciales\ciudad\ciudad_routes.py" />
     <Compile Include="app\rutas\referenciales\ciudad\__init__.py" />
@@ -1781,6 +1785,8 @@
     <Folder Include="app\dao\referenciales\persona" />
     <Folder Include="app\dao\referenciales\usuario" />
     <Folder Include="app\rutas" />
+    <Folder Include="app\rutas\abm\" />
+    <Folder Include="app\rutas\abm\templates\" />
     <Folder Include="app\rutas\referenciales" />
     <Folder Include="app\rutas\referenciales\ciudad" />
     <Folder Include="app\rutas\referenciales\ciudad\templates" />
@@ -1821,6 +1827,10 @@
     <Folder Include="app\static\vendor\jquery-easing" />
     <Folder Include="app\static\vendor\sweetalert" />
     <Folder Include="app\templates" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="CondaEnv|CondaEnv|yulicami" />
+    <InterpreterReference Include="Global|PythonCore|3.10" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
 </Project>

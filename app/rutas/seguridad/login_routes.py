@@ -27,7 +27,7 @@ def login():
                 session.permanent = True
                 session['usu_id'] = usuario_encontrado['usu_id']
                 session['usu_nick'] = request.form['usuario_nombre']
-                session['usuario_nombre'] = request.form['usu_nick']
+                session['usuario_nombre'] = request.form['usuario_nombre']
                 #session['usuario_nombre'] = request.form['usuario_nombre']
                 #session['nombre_persona'] = usuario_encontrado['nombre_persona']
                 #session['grupo'] = usuario_encontrado['grupo']
@@ -38,7 +38,7 @@ def login():
             return redirect(url_for('login.login'))
     elif request.method == 'GET':
         print('request.method == get!!!!!!!!!!!!!')
-        return render_template('inicio.html')
+        return render_template('login.html')
 
 @logmod.route('/logout')
 def logout():

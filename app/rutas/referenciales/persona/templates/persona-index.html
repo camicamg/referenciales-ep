@@ -139,7 +139,8 @@ Persona
         fetch(`/api/v1/personas/${idPersona}`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCsrfToken()
           }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, telefono: nuevoTelefono, correo: nuevoCorreo, direccion: nuevaDireccion }) // Incluir nombre y apellido
         })
         .then(resp => resp.json())
@@ -159,7 +160,8 @@ Persona
         fetch(`/api/v1/personas`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCsrfToken()
           }, body: JSON.stringify({ nombre: nuevoNombre, apellido: nuevoApellido, telefono: nuevoTelefono, correo: nuevoCorreo, direccion: nuevaDireccion }) // Incluir nombre y apellido
         })
         .then(resp => resp.json())
@@ -201,7 +203,8 @@ Persona
           fetch(`/api/v1/personas/${idPersona}`, {
             method: 'GET',
             headers: {
-              'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
             }
           })
           .then(resp => resp.json())
@@ -231,7 +234,8 @@ Persona
           fetch(`/api/v1/personas/${idPersona}`, {
             method: 'DELETE',
             headers: {
-              'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
             }
           })
           .then(resp => resp.json())
@@ -263,5 +267,9 @@ Persona
     initDatatable();
     addEvents();
   });
+
+    const getCsrfToken = () => {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    };
 </script>
 {% endblock %}

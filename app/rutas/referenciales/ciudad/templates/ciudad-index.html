@@ -111,7 +111,8 @@ Ciudades
         fetch(`/api/v1/ciudades/${idCiudad}`, {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCsrfToken()
           }, body: JSON.stringify({ descripcion: nuevaDescripcion})
         })
         .then(resp => resp.json())
@@ -131,7 +132,8 @@ Ciudades
         fetch(`/api/v1/ciudades`, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+              'Content-Type': 'application/json',
+              'X-CSRFToken': getCsrfToken()
           }, body: JSON.stringify({ descripcion: nuevaDescripcion})
         })
         .then(resp => resp.json())
@@ -172,7 +174,8 @@ Ciudades
           fetch(`/api/v1/ciudades/${idCiudad}`, {
             method: 'GET',
             headers: {
-              'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
             }
           })
           .then(resp => resp.json())
@@ -199,7 +202,8 @@ Ciudades
           fetch(`/api/v1/ciudades/${idCiudad}`, {
             method: 'DELETE',
             headers: {
-              'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCsrfToken()
             }
           })
           .then(resp => resp.json())
@@ -233,5 +237,9 @@ Ciudades
     initDatatable();
     addEvents();
   });
+
+    const getCsrfToken = () => {
+        return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    };
 </script>
 {% endblock %}
